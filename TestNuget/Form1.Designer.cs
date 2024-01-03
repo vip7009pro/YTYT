@@ -32,6 +32,7 @@
             button2 = new Button();
             button3 = new Button();
             button4 = new Button();
+            button5 = new Button();
             SuspendLayout();
             // 
             // button1
@@ -56,7 +57,7 @@
             // 
             // button3
             // 
-            button3.Location = new Point(336, 216);
+            button3.Location = new Point(403, 162);
             button3.Name = "button3";
             button3.Size = new Size(157, 23);
             button3.TabIndex = 2;
@@ -66,7 +67,7 @@
             // 
             // button4
             // 
-            button4.Location = new Point(188, 313);
+            button4.Location = new Point(431, 309);
             button4.Name = "button4";
             button4.Size = new Size(75, 23);
             button4.TabIndex = 3;
@@ -74,11 +75,22 @@
             button4.UseVisualStyleBackColor = true;
             button4.Click += button4_Click;
             // 
+            // button5
+            // 
+            button5.Location = new Point(131, 308);
+            button5.Name = "button5";
+            button5.Size = new Size(146, 23);
+            button5.TabIndex = 4;
+            button5.Text = "Dang Nhap Profile";
+            button5.UseVisualStyleBackColor = true;
+            button5.Click += button5_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(button5);
             Controls.Add(button4);
             Controls.Add(button3);
             Controls.Add(button2);
@@ -94,5 +106,6 @@
         private Button button2;
         private Button button3;
         private Button button4;
+        private Button button5;
     }
 }
