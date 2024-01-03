@@ -15,42 +15,42 @@ namespace TestNuget
         }
         public class BrowserInstance
         {
+            public string url;
             public ChromeOptions options = new ChromeOptions();
             public ChromeDriverService chromeDriverService = ChromeDriverService.CreateDefaultService();
 
-            string userAgent = "Mega Phone";
-
+            public string userAgent = "Mega Phone";
+            /*
+            public string proxyAddress = "208.167.233.70";
+            public string proxyPort = "1893";
+            public string proxyUser = "proxy1user";
+            public string proxyPass = "123456789";
+            */
             // Địa chỉ và cổng của proxy
-            string proxyAddress = "208.167.233.70";
-            string proxyPort = "1893";
-            string proxyUser = "proxy1user";
-            string proxyPass = "123456789";
-            public Proxy proxy;
 
             public IWebDriver driver;
 
-            public void init()
+            public void init(string url, string proxyIP, string proxyPort, string proxyUser, string proxyPass)
             {
                 this.options.AddArgument($"user-agent={userAgent}");
-                this.proxy = new Proxy
+                Proxy proxy = new Proxy
                 {
                     Kind = ProxyKind.Manual,
                     SocksUserName = proxyUser,
                     SocksPassword = proxyPass,
-                    HttpProxy = $"{proxyAddress}:{proxyPort}",
-                    SslProxy = $"{proxyAddress}:{proxyPort}",
-                    FtpProxy = $"{proxyAddress}:{proxyPort}",
+                    HttpProxy = $"{proxyIP}:{proxyPort}",
+                    SslProxy = $"{proxyIP}:{proxyPort}",
+                    FtpProxy = $"{proxyIP}:{proxyPort}",
                 };
-                this.options.Proxy = this.proxy;
+                this.options.Proxy = proxy;
+                if(proxyUser != "")
                 this.options.AddExtension("C:\\WEB APP PROJECT\\AppNuget\\TestNuget\\TestNuget\\bin\\Debug\\net6.0-windows\\Proxy-Auto-Auth.crx");
                 chromeDriverService.HideCommandPromptWindow = true;
                 options.AddExcludedArguments("enable-automation");
-
                 this.driver = new ChromeDriver(chromeDriverService = this.chromeDriverService, options = this.options);
 
-            }
-            public void runScript()
-            {
+
+
                 driver.Navigate().GoToUrl("chrome-extension://ggmdpepbjljkkkdaklfihhngmmgmpggp/options.html");
                 Thread.Sleep(1000);
                 driver.FindElement(By.Id("login")).SendKeys(proxyUser);
@@ -59,7 +59,6 @@ namespace TestNuget
                 driver.FindElement(By.Id("retry")).SendKeys("2");
                 driver.FindElement(By.Id("save")).Click();
 
-                driver.Navigate().GoToUrl("https://youtube.com");
 
                 var tabs = driver.WindowHandles;
                 if (tabs.Count > 1)
@@ -68,8 +67,15 @@ namespace TestNuget
                     driver.Close();
                     driver.SwitchTo().Window(tabs[1]);
                 }
-                driver.Navigate().GoToUrl("https://www.youtube.com/hungnguyenpage");
-                driver.Navigate().GoToUrl("https://www.youtube.com/shorts/iJjSTFesgOw");
+                driver.Navigate().GoToUrl(url);
+
+
+
+            }
+            public void runScript(string url)
+            {
+                
+                //driver.Navigate().GoToUrl("https://www.youtube.com/shorts/iJjSTFesgOw");
             }
 
 
@@ -141,22 +147,24 @@ namespace TestNuget
             firefoxDriver.Navigate();
         }
 
-        public async Task youtubeThread()
+        public async Task youtubeThread(string url, string proxyIP, string proxyPort, string proxyUser, string proxyPass)
         {
             await Task.Run(() =>
             {
                 BrowserInstance br1 = new BrowserInstance();
-                br1.init();
-                br1.runScript();
-            });           
+                br1.init(url: url, proxyIP: proxyIP, proxyPort: proxyPort, proxyUser: proxyUser, proxyPass: proxyPass);
+               
+            });
+            
 
         }
         private void button4_Click(object sender, EventArgs e)
         {
             for(int i=0;i<3; i++)
             {
-                Thread.Sleep(2000);
-                youtubeThread();
+                //Thread.Sleep(2000);
+                youtubeThread(url:"https://www.youtube.com/watch?v=fY0qwvBFST4&ab_channel=KidzInvader", proxyIP: "208.167.233.70", proxyPort: "1893", proxyUser: "proxy1user", proxyPass: "123456789");
+                //youtubeThread(url: "https://www.youtube.com/watch?v=fY0qwvBFST4&ab_channel=KidzInvader", proxyIP: "49.228.131.169", proxyPort: "5000", proxyUser: "", proxyPass: "");
             }
             
         }
