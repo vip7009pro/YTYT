@@ -2,9 +2,11 @@
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.Interactions;
+using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using static System.Windows.Forms.Design.AxImporter;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace TestNuget
 {
@@ -137,6 +139,43 @@ namespace TestNuget
         ChromeDriverService chromeDriverService = ChromeDriverService.CreateDefaultService();
 
 
+
+
+        private void LoadExcelData(string filePath)
+        {
+            Excel.Application excelApp = new Excel.Application();
+            Excel.Workbook workbook = excelApp.Workbooks.Open(filePath);
+            Excel.Worksheet worksheet = workbook.Sheets[1];
+            Excel.Range range = worksheet.UsedRange;
+
+            DataTable dt = new DataTable();
+
+            // Thêm cột vào DataTable
+            for (int i = 1; i <= range.Columns.Count; i++)
+            {
+                dt.Columns.Add((string)(range.Cells[1, i] as Excel.Range).Value);
+            }
+
+            // Thêm dữ liệu vào DataTable
+            for (int row = 2; row <= range.Rows.Count; row++)
+            {
+                DataRow dataRow = dt.Rows.Add();
+                for (int col = 1; col <= range.Columns.Count; col++)
+                {
+                    dataRow[col - 1] = (range.Cells[row, col] as Excel.Range).Value;
+                }
+            }
+
+            // Đóng tệp Excel
+            workbook.Close();
+            excelApp.Quit();
+
+            // Hiển thị dữ liệu trong DataGridView
+            dataGridView1.DataSource = dt;
+        }
+
+
+
         private void button1_Click(object sender, EventArgs e)
         {
             chromeDriverService.HideCommandPromptWindow = true;
@@ -223,6 +262,18 @@ namespace TestNuget
             process.StartInfo.FileName = @"C:\Program Files\Google\Chrome\Application\chrome.exe";
             process.StartInfo.Arguments = " --user-data-dir=C:\\WEB APP PROJECT\\AppNuget\\TestNuget\\TestNuget\\bin\\Debug\\net6.0-windows\\profile\\user1 --remote-debugging-port=8989";
             process.Start();
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Excel Files|*.xls;*.xlsx;*.xlsm";
+
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                string filePath = openFileDialog.FileName;
+                LoadExcelData(filePath);
+            }
         }
     }
 }
